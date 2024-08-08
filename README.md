@@ -8,7 +8,6 @@ Recognizing the value and impact of automation in the SOC environment, this proj
 
 Any contribution, feedback or idea is welcome.
 
-
 ### Technical Details
 
 * `workflows/IP_Reputation.json` is the **IP workflow** described in the blog post.
@@ -25,6 +24,8 @@ We used a self-hosted instance of n8n 1.50.0 and Security Onion 2.4.90 for this 
 {"description":"Hash Reputation","icon":"fa-external-link-alt","links":["https://<your-n8n-instance-name>/webhook/reputation?hash={value}"],"name":"Hash Reputation","target":"_blank"}
 {"description":"CVE Info","icon":"fa-external-link-alt","links":["https://<your-n8n-instance-name>/webhook/reputation?cve={value}"],"name":"CVE Info","target":"_blank"}
 ```
+
+We put `<your-api-value>` inside every field and account in the workflows that required the use of API. Please change them accordingly.
 
 ### Contributors
 
