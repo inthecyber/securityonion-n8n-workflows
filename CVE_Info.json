@@ -1,0 +1,248 @@
+{
+  "name": "CVE Info GitHub",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "c9ab66a2-c035-45dc-bafa-23aa23c6cd6b",
+      "name": "Execute Workflow Trigger",
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1,
+      "position": [
+        -780,
+        20
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "const out = $input.first();\nconst str = out.json.query.cve;\nconst regex = /\\bCVE-\\d{4}-\\d{4,7}\\b/i;\nconst match = str.match(regex);\n\nif (match) {\n  return {\"cve\":match[0]};\n} else {\n  return {\"cve\":\"No CVE found\"};\n}"
+      },
+      "id": "f87ae543-e0c6-4460-9fbd-55df5700c54a",
+      "name": "Extract CVE ID",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -480,
+        20
+      ]
+    },
+    {
+      "parameters": {
+        "url": "=https://vulnerability.circl.lu/vulnerability/{{ $json.cve }}",
+        "options": {}
+      },
+      "id": "970bbe45-8284-4355-abd5-d0f7eff02e53",
+      "name": "Vulnerability Lookup",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -40,
+        -140
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "b3bf0874-6333-4238-8bda-7021e450793f",
+              "name": "cveMetadata.dateUpdated",
+              "value": "={{ $json.cveMetadata.dateUpdated }}",
+              "type": "string"
+            },
+            {
+              "id": "8caf18ad-ab46-4696-bac7-ed38cf0df262",
+              "name": "cveMetadata.datePublished",
+              "value": "={{ $json.cveMetadata.datePublished }}",
+              "type": "string"
+            },
+            {
+              "id": "272d3ad9-f7eb-440f-9052-122585c064a1",
+              "name": "cveMetadata.state",
+              "value": "={{ $json.cveMetadata.state }}",
+              "type": "string"
+            },
+            {
+              "id": "1031c067-2da5-4afc-9d24-09ba3e5e6dbf",
+              "name": "cveMetadata.cveId",
+              "value": "={{ $json.cveMetadata.cveId }}",
+              "type": "string"
+            },
+            {
+              "id": "d61aede9-79dd-4634-a9cd-bd65430d3866",
+              "name": "containers.cna.title",
+              "value": "={{ $json.containers.cna.title }}",
+              "type": "string"
+            },
+            {
+              "id": "e5bf4c98-a8dd-41a9-88a9-5c76ceb3e3ab",
+              "name": "containers.cna.descriptions[0].value",
+              "value": "={{ $json.containers.cna.descriptions[0].value }}",
+              "type": "string"
+            },
+            {
+              "id": "b7951556-c3e2-4056-ae2a-c22ac662508d",
+              "name": "containers.cna.metrics[0].cvssV4_0.baseScore",
+              "value": "={{ $json.containers.cna.metrics[0].cvssV4_0.baseScore }}",
+              "type": "object"
+            },
+            {
+              "id": "899f939a-a052-451a-bb30-fa29b6559692",
+              "name": "containers.cna.solutions[0].value",
+              "value": "={{ $json.containers.cna.solutions[0].value }}",
+              "type": "string"
+            },
+            {
+              "id": "0a20940f-bb8a-4a36-9134-871a10e67f5b",
+              "name": "containers.cna.metrics[0].cvssV3_1.baseScore",
+              "value": "={{ $json.containers.cna.metrics[0].cvssV3_1.baseScore }}",
+              "type": "number"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "537b5d4b-c45e-40fa-bbf0-2b807b84d286",
+      "name": "Fields Extraction",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        200,
+        -140
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "a8e26dc5-a171-4b3e-b343-261b7e96a72a",
+              "leftValue": "={{ $json.cve }}",
+              "rightValue": "=No CVE found",
+              "operator": {
+                "type": "string",
+                "operation": "notEquals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "454a08c1-607f-4e3e-bd93-42571f4fbf71",
+      "name": "If",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        -300,
+        20
+      ]
+    },
+    {
+      "parameters": {
+        "html": "<!DOCTYPE html>\n<html>\n  <head>\n    <meta charset=\"utf-8\">\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">\n    <title>Report</title>\n    <link rel=\"stylesheet\" href=\"https://cdn.jsdelivr.net/npm/bulma@1.0.1/css/bulma.min.css\">\n    <link rel=\"stylesheet\" href=\"https://cdn.jsdelivr.net/npm/bulma-prefers-dark@0.1.0/css/bulma-prefers-dark.min.css\">\n    <style>\n      @media (prefers-color-scheme: dark) {\n        html, body {\n          background-color: hsl(0, 0%, 21%);\n        }\n      }\n    </style>\n  </head>\n  <body>\n    <section class=\"hero is-fullheight\">\n        <div class=\"hero-body\">\n            <div class=\"container is-fluid\">\n              <p class=\"title is-2 is-spaced\">\n                Report\n              </p> \n              <p>\n                No CVE Found\n              </p>\n            </div>\n        </div>\n        <div class=\"hero-foot\">\n            <footer class=\"footer\">\n                <div class=\"content has-text-centered\">\n                  <p>\n                    Built with ❤️ by BlueTeam @ <a href=\"https://www.inthecybergroup.com/en/\" target=\"_blank\">InTheCyber</a>\n                  </p>\n                </div>\n            </footer>\n        </div>\n    </section>\n  </body>\n</html>"
+      },
+      "id": "58cdd0a4-12eb-4245-bbb7-86ddbcb59fc9",
+      "name": "HTML No CVE Found",
+      "type": "n8n-nodes-base.html",
+      "typeVersion": 1.2,
+      "position": [
+        -40,
+        140
+      ]
+    },
+    {
+      "parameters": {
+        "html": "<!DOCTYPE html>\n<html>\n  <head>\n    <meta charset=\"utf-8\">\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">\n    <title>Report</title>\n    <link rel=\"stylesheet\" href=\"https://cdn.jsdelivr.net/npm/bulma@1.0.1/css/bulma.min.css\">\n    <link rel=\"stylesheet\" href=\"https://cdn.jsdelivr.net/npm/bulma-prefers-dark@0.1.0/css/bulma-prefers-dark.min.css\">\n    <style>\n      @media (prefers-color-scheme: dark) {\n        html, body {\n          background-color: hsl(0, 0%, 21%);\n        }\n      }\n    </style>\n  </head>\n  <body>\n    <section class=\"hero is-fullheight\">\n        <div class=\"hero-body\">\n            <div class=\"container is-fluid\">\n              <p class=\"title is-2 is-spaced\">\n                Report - Info on {{ $if($json.cveMetadata.cveId,$json.cveMetadata.cveId,\"Information not found\") }}\n              </p> \n              <p>\n                <strong>CVE ID</strong> {{ $if($json.cveMetadata.cveId,$json.cveMetadata.cveId,\"Information not found\") }} <br>\n                <strong>Title</strong> {{ $if($json.containers.cna.title,$json.containers.cna.title,\"Information not found\") }} <br>\n                <strong>State</strong> {{ $if($json.cveMetadata.state,$json.cveMetadata.state,\"Information not found\") }}<br>\n                <strong>Date published</strong> {{ $if($json.cveMetadata.datePublished,$json.cveMetadata.datePublished,\"Information not found\") }}<br>\n                <strong>Date updated</strong> {{ $if($json.cveMetadata.dateUpdated,$json.cveMetadata.dateUpdated,\"Information not found\") }}<br>\n                <strong>Description</strong> {{ $if($json.containers.cna.descriptions[0].value,$json.containers.cna.descriptions[0].value,\"Information not found\") }}<br>\n                <strong>CVSS v4.0 base score</strong> {{ $if($json.containers.cna.metrics[0].cvssV4_0.baseScore,$json.containers.cna.metrics[0].cvssV4_0.baseScore,\"Information not found\") }}<br>\n                <strong>CVSS v3.1 base score</strong> {{ $if($json.containers.cna.metrics[0].cvssV3_1.baseScore,$json.containers.cna.metrics[0].cvssV3_1.baseScore,\"Information not found\") }}<br>\n                <strong>More info</strong> <a href=\"https://nvd.nist.gov/vuln/detail/{{ $json.cveMetadata.cveId }}\" target=\"_blank\">https://nvd.nist.gov/vuln/detail/{{ $json.cveMetadata.cveId }}</a><br>\n                <strong>Data based on</strong> <a href=\"https://vulnerability.circl.lu/vuln/{{ $json.cveMetadata.cveId }}\" target=\"_blank\">https://vulnerability.circl.lu/vuln/{{ $json.cveMetadata.cveId }}</a>\n              </p>\n            </div>\n        </div>\n        <div class=\"hero-foot\">\n            <footer class=\"footer\">\n                <div class=\"content has-text-centered\">\n                  <p>\n                    Built with ❤️ by BlueTeam @ <a href=\"https://www.inthecybergroup.com/en/\" target=\"_blank\">InTheCyber</a>\n                  </p>\n                </div>\n            </footer>\n        </div>\n    </section>\n  </body>\n</html>"
+      },
+      "id": "65049d56-7835-4ac1-973a-10672d2b41ce",
+      "name": "HTML CVE found",
+      "type": "n8n-nodes-base.html",
+      "typeVersion": 1.2,
+      "position": [
+        440,
+        -140
+      ]
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Extract CVE ID": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Vulnerability Lookup": {
+      "main": [
+        [
+          {
+            "node": "Fields Extraction",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fields Extraction": {
+      "main": [
+        [
+          {
+            "node": "HTML CVE found",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Vulnerability Lookup",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "HTML No CVE Found",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Execute Workflow Trigger": {
+      "main": [
+        [
+          {
+            "node": "Extract CVE ID",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "e0848df9-39e3-4239-b81c-464d80dad31c",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "f9840ed24cb417efbbb054fd3a3d632ab0351dce782a4daf8397f13882237b22"
+  },
+  "id": "F51kgbFljXF6hzzN",
+  "tags": []
+}

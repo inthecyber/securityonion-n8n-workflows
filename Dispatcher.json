@@ -1,0 +1,342 @@
+{
+  "name": "Dispatcher",
+  "nodes": [
+    {
+      "parameters": {
+        "workflowId": "<ip-workflow-id>",
+        "options": {}
+      },
+      "id": "0002e884-cce0-4cd9-92ce-d9ae932382de",
+      "name": "IP",
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1,
+      "position": [
+        980,
+        -40
+      ]
+    },
+    {
+      "parameters": {
+        "workflowId": "<domain-workflow-id>",
+        "options": {}
+      },
+      "id": "33b53dd5-aed4-4314-87bc-99002d62b582",
+      "name": "Domain",
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1,
+      "position": [
+        980,
+        140
+      ]
+    },
+    {
+      "parameters": {
+        "workflowId": "<hash-workflow-id>",
+        "options": {}
+      },
+      "id": "f1e8d747-e1cc-4d33-bb09-ee58438bb683",
+      "name": "Hash",
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1,
+      "position": [
+        980,
+        320
+      ]
+    },
+    {
+      "parameters": {
+        "workflowId": "<cve-info-workflow-id>",
+        "options": {}
+      },
+      "id": "9a91d533-93bd-4534-9d2a-26acb19b8b50",
+      "name": "CVE info",
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1,
+      "position": [
+        980,
+        520
+      ]
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict"
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.query.ip }}",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "string",
+                      "operation": "exists",
+                      "singleValue": true
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict"
+                },
+                "conditions": [
+                  {
+                    "id": "6292dccb-63d1-46c3-a42d-a3f680d492de",
+                    "leftValue": "={{ $json.query.domain }}",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "string",
+                      "operation": "exists",
+                      "singleValue": true
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict"
+                },
+                "conditions": [
+                  {
+                    "id": "b1b51203-9ffe-4c3b-831a-68e1f28225bc",
+                    "leftValue": "={{ $json.query.hash }}",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "string",
+                      "operation": "exists",
+                      "singleValue": true
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict"
+                },
+                "conditions": [
+                  {
+                    "id": "74d7979e-303e-4c37-9d43-9b46aa19957a",
+                    "leftValue": "={{ $json.query.cve }}",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "string",
+                      "operation": "exists",
+                      "singleValue": true
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "a88461fa-ed05-4f2e-a437-b09d347680e2",
+      "name": "Switch",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3,
+      "position": [
+        700,
+        280
+      ]
+    },
+    {
+      "parameters": {
+        "path": "reputation",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "112709a0-a060-44be-9977-739a0529e5f0",
+      "name": "Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        440,
+        280
+      ],
+      "webhookId": "d73d6a7a-aa67-486e-9bdd-a514c348f0a6"
+    },
+    {
+      "parameters": {
+        "respondWith": "text",
+        "responseBody": "={{ $json.html }}",
+        "options": {}
+      },
+      "id": "2b96bb30-0fac-4fa9-b1e3-ba55483ff77b",
+      "name": "Respond to Webhook IP",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        1360,
+        -40
+      ]
+    },
+    {
+      "parameters": {
+        "respondWith": "text",
+        "responseBody": "={{ $json.html }}",
+        "options": {}
+      },
+      "id": "f5b85e62-fce8-49b2-af23-7c7b7c75fddf",
+      "name": "Respond to Webhook Domain",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        1360,
+        140
+      ]
+    },
+    {
+      "parameters": {
+        "respondWith": "text",
+        "responseBody": "={{ $json.html }}",
+        "options": {}
+      },
+      "id": "78faae35-0337-43ed-be3e-7725ba1205d3",
+      "name": "Respond to Webhook Hash",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        1360,
+        320
+      ]
+    },
+    {
+      "parameters": {
+        "respondWith": "text",
+        "responseBody": "={{ $json.html }}",
+        "options": {}
+      },
+      "id": "d0e886b0-c0ef-4dbc-991a-87f60a17836b",
+      "name": "Respond to Webhook CVEInfo",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        1360,
+        520
+      ]
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "IP": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook IP",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Domain": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook Domain",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Hash": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook Hash",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "CVE info": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook CVEInfo",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch": {
+      "main": [
+        [
+          {
+            "node": "IP",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Domain",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Hash",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "CVE info",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "65ef9cc3-99d8-40aa-84c5-703cc2004219",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "f9840ed24cb417efbbb054fd3a3d632ab0351dce782a4daf8397f13882237b22"
+  },
+  "id": "sv0PjkNvs6tFzTZw",
+  "tags": []
+}

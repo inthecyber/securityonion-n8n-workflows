@@ -1,0 +1,728 @@
+{
+  "name": "Hash Reputation github",
+  "nodes": [
+    {
+      "parameters": {
+        "html": "<!DOCTYPE html>\n<html>\n  <head>\n    <meta charset=\"utf-8\">\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">\n    <title>Report</title>\n    <link rel=\"stylesheet\" href=\"https://cdn.jsdelivr.net/npm/bulma@1.0.1/css/bulma.min.css\">\n    <link rel=\"stylesheet\" href=\"https://cdn.jsdelivr.net/npm/bulma-prefers-dark@0.1.0/css/bulma-prefers-dark.min.css\">\n    <style>\n      @media (prefers-color-scheme: dark) {\n        html, body {\n          background-color: hsl(0, 0%, 21%);\n        }\n      }\n    </style>\n  </head>\n  <body>\n    <section class=\"hero is-fullheight\">\n        <div class=\"hero-body\">\n            <div class=\"container is-fluid content\">\n                <p class=\"title is-2\">\n                  Report - Hash Analysis {{ $json.out[0]['hash'] }}\n                </p> \n                <p class=\"title is-3\">VirusTotal - <a href=\"{{ $json.out[1].virustotal_link }}\" target=\"_blank\">Report</a></p> \n                <p>\n                  <strong>Filenames:</strong> {{  $if($json.out[1].names,$json.out[1].names,\"Information not found\") }}<br>\n                  <strong>Malicious:</strong> {{  $if($json.out[1].last_analysis_stats,$json.out[1].last_analysis_stats.malicious,\"Information not found\") }}<br>\n                  <strong>Suspicious:</strong> {{  $if($json.out[1].last_analysis_stats,$json.out[1].last_analysis_stats.suspicious,\"Information not found\") }}<br>\n                  <strong>Undetected:</strong> {{  $if($json.out[1].last_analysis_stats,$json.out[1].last_analysis_stats.undetected,\"Information not found\") }}<br>\n                  <strong>Harmless:</strong> {{  $if($json.out[1].last_analysis_stats,$json.out[1].last_analysis_stats.harmless,\"Information not found\") }}<br>\n                  <strong>Last analysis date</strong> {{ $if($json.out[1].virustotal_date.isEmpty(),\"Information  not found\",DateTime.fromSeconds($json.out[1].virustotal_date.toNumber()).toISO()) }}\n                 </p>\n                <p class=\"title is-3\">HybridAnalysis - <a href=\"https://www.hybrid-analysis.com/search?query={{ $json.out[2].hb_sha256 }}\" target=\"_blank\">Report</a></p>\n                <p>\n                  <strong>Last submission name:</strong> {{  $if($json.out[2].submit_name.isEmpty(),\"Information not found\",$json.out[2].submit_name) }}<br>\n                  <strong>Last submission VX family:</strong> {{  $if($json.out[2].hb_vx_family.isEmpty(),\"Information not found\",$json.out[2].hb_vx_family) }}<br>\n                  <strong>Last submission verdict:</strong> {{  $if($json.out[2].hb_verdict.isEmpty(),\"Information not found\",$json.out[2].hb_verdict) }}<br>\n                  <strong>Last submission threat score:</strong> {{  $if($json.out[2].hb_threat_score.isEmpty(),\"Information not found\",$json.out[2].hb_threat_score) }}<br>\n                  <strong>Last analysis date</strong> {{ $if($json.out[2].hb_submissions_date.isEmpty(),\"Information not found\",$json.out[2].hb_submissions_date) }}\n                </p>\n                <p class=\"title is-3\">Malware Bazaar - <a href=\"{{ $json.out[3].mb_link }}\" target=\"_blank\">Report</a></p>\n                <p>\n                  <strong>Last hash submitted filename:</strong> {{ $if($json.out[3].mb_filename.isEmpty(),\"Information not found\",$json.out[3].mb_filename) }}<br>\n                  <strong>Last hash submitted first seen:</strong> {{ $if($json.out[3].mb_first_seen.isEmpty(),\"Information not found\",$json.out[3].mb_first_seen) }}<br>\n                  <strong>Last hash submitted comment:</strong> {{ $if($json.out[3].mb_comment.isEmpty(),\"Information not found\",$json.out[3].mb_comment) }}<br>\n                  <strong>Last hash submitted signature:</strong> {{ $if($json.out[3].mb_signature.isEmpty(),\"Information not found\",$json.out[3].mb_signature) }}\n                </p>\n                <p class=\"title is-3\">MISP</p>\n                <p> {{ $json.out[4].html }}</p>       \n            </div>\n        </div>\n        <div class=\"hero-foot\">\n            <footer class=\"footer\">\n                <div class=\"content has-text-centered\">\n                  <p>\n                    Built with ❤️ by BlueTeam @ <a href=\"https://www.inthecybergroup.com/en/\" target=\"_blank\">InTheCyber</a>\n                  </p>\n                </div>\n            </footer>\n        </div>\n    </section>\n  </body>\n</html>"
+      },
+      "id": "a229d80c-461e-41af-9ae6-b83b2410545a",
+      "name": "HTML",
+      "type": "n8n-nodes-base.html",
+      "typeVersion": 1.2,
+      "position": [
+        1520,
+        260
+      ]
+    },
+    {
+      "parameters": {
+        "aggregate": "aggregateAllItemData",
+        "destinationFieldName": "out",
+        "options": {}
+      },
+      "id": "c9970ab0-c38b-4bb6-a1d0-eb8d9ce5d8f4",
+      "name": "Aggregate",
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [
+        1220,
+        260
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "20a4c3ac-1893-4ffd-9101-5cd8a27fa070",
+              "leftValue": "={{ $json.Event }}",
+              "rightValue": "",
+              "operator": {
+                "type": "object",
+                "operation": "exists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "e2c11a8e-f36e-4c98-a3cc-834813f6b1d9",
+      "name": "If",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        -360,
+        1140
+      ]
+    },
+    {
+      "parameters": {},
+      "id": "8e6033d7-8326-4926-b409-9d515ad4c26b",
+      "name": "Execute Workflow Trigger",
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1,
+      "position": [
+        -1280,
+        680
+      ]
+    },
+    {
+      "parameters": {
+        "numberInputs": 8
+      },
+      "id": "33886ed0-a0f8-4330-8889-2cbc03204341",
+      "name": "Merge",
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3,
+      "position": [
+        920,
+        180
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "3a01de87-1902-4b30-a080-5454a6bea7d1",
+              "name": "hash",
+              "value": "={{ $json.query.hash }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "4504f071-5bb4-474b-bd1e-006d684594d1",
+      "name": "Keep Original Hash",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -620,
+        160
+      ]
+    },
+    {
+      "parameters": {
+        "curlImport": "",
+        "httpVariantWarning": "",
+        "method": "GET",
+        "url": "=https://www.virustotal.com/api/v3/files/{{ $json.query.hash }}",
+        "": "",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "virusTotalApi",
+        "provideSslCertificates": false,
+        "sendQuery": false,
+        "sendHeaders": false,
+        "sendBody": false,
+        "options": {
+          "response": {
+            "response": {
+              "fullResponse": false,
+              "neverError": true,
+              "responseFormat": "autodetect"
+            }
+          }
+        },
+        "infoMessage": ""
+      },
+      "id": "4ff6b40b-0bd0-478c-bcf5-20eaa52ff191",
+      "name": "VirusTotal Hash Search",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -620,
+        340
+      ],
+      "extendsCredential": "virusTotalApi",
+      "alwaysOutputData": true,
+      "credentials": {
+        "virusTotalApi": {
+          "id": "sJCO2wel5Jh9CMuq",
+          "name": "VirusTotal account Github"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "search",
+        "value": "={{ $json.query.hash }}",
+        "additionalFields": {}
+      },
+      "id": "658cc885-343f-498f-b25b-99115dc84083",
+      "name": "MISP Hash Search",
+      "type": "n8n-nodes-base.misp",
+      "typeVersion": 1,
+      "position": [
+        -620,
+        1140
+      ],
+      "alwaysOutputData": true,
+      "credentials": {
+        "mispApi": {
+          "id": "MUYZzqpUvD41rZ4X",
+          "name": "MISP account Github"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "ef506396-9df9-4ca9-8db5-08edfb3b7516",
+              "name": "last_analysis_stats",
+              "value": "={{ $json.data.attributes.last_analysis_stats }}",
+              "type": "object"
+            },
+            {
+              "id": "df3e6866-ead6-4a28-b21d-fb1666a1aabb",
+              "name": "virustotal_date",
+              "value": "={{ $json.data.attributes.last_analysis_date }}",
+              "type": "string"
+            },
+            {
+              "id": "06312bd8-8611-46ff-bcfb-46f81763646d",
+              "name": "virustotal_link",
+              "value": "=https://www.virustotal.com/gui/file/{{ $json.data.id }}",
+              "type": "string"
+            },
+            {
+              "id": "d3e1c121-ba78-4dec-9fc4-27fd263235e6",
+              "name": "virustotal_hash",
+              "value": "={{ $json.data.id }}",
+              "type": "string"
+            },
+            {
+              "id": "dc6ba86d-2340-4ca3-9936-b18c3d73313c",
+              "name": "names",
+              "value": "={{ $json.data.attributes.names }}",
+              "type": "array"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "c6219741-b114-4f90-b27e-e111f5881996",
+      "name": "Field Extraction VirusTotal",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        380,
+        340
+      ]
+    },
+    {
+      "parameters": {
+        "curlImport": "",
+        "httpVariantWarning": "",
+        "method": "POST",
+        "url": "https://hybrid-analysis.com/api/v2/search/hash",
+        "": "",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "hybridAnalysisApi",
+        "provideSslCertificates": false,
+        "sendQuery": false,
+        "sendHeaders": false,
+        "sendBody": true,
+        "contentType": "form-urlencoded",
+        "specifyBody": "keypair",
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "hash",
+              "value": "={{ $json.query.hash }}"
+            }
+          ]
+        },
+        "options": {
+          "response": {
+            "response": {
+              "fullResponse": false,
+              "neverError": true,
+              "responseFormat": "autodetect"
+            }
+          }
+        },
+        "infoMessage": ""
+      },
+      "id": "779a7599-df0f-4368-aa39-add8443694fc",
+      "name": "HybridAnalysis Hash Search",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -620,
+        540
+      ],
+      "extendsCredential": "hybridAnalysisApi",
+      "alwaysOutputData": true,
+      "credentials": {
+        "hybridAnalysisApi": {
+          "id": "2708Xyfifqsy9Xbn",
+          "name": "Hybrid Analysis account Github"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://mb-api.abuse.ch/api/v1/",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "API-KEY",
+              "value": "<your-api-key>"
+            }
+          ]
+        },
+        "sendBody": true,
+        "contentType": "multipart-form-data",
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "query",
+              "value": "get_info"
+            },
+            {
+              "name": "hash",
+              "value": "={{ $json.query.hash }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "faf76f18-4ef2-4090-9678-028539d77e48",
+      "name": "MalwareBaazar Hash Search",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -620,
+        760
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "7306348a-b25d-49be-a4cd-86c02bc5b7dd",
+              "name": "hb_submissions_date",
+              "value": "={{ $json.hb_data[0].submissions[0].created_at }}",
+              "type": "string"
+            },
+            {
+              "id": "3685179e-6dc9-4b2e-adbb-c957517350f2",
+              "name": "hb_vx_family",
+              "value": "={{ $json.hb_data[0].vx_family }}",
+              "type": "string"
+            },
+            {
+              "id": "c73016bf-9d7a-4f26-b532-aec0216ce520",
+              "name": "hb_verdict",
+              "value": "={{ $json.hb_data[0].verdict }}",
+              "type": "string"
+            },
+            {
+              "id": "97f434b7-752c-4b1b-ac51-b85980fa60d6",
+              "name": "hb_threat_score",
+              "value": "={{ $json.hb_data[0].threat_score }}",
+              "type": "number"
+            },
+            {
+              "id": "0b706faf-b413-4475-9bd7-673bd15564d2",
+              "name": "hb_sha256",
+              "value": "={{ $json.hb_data[0].sha256 }}",
+              "type": "string"
+            },
+            {
+              "id": "bb3faf96-21b3-4858-84fb-92677497abda",
+              "name": "submit_name",
+              "value": "={{ $json.hb_data[0].submit_name }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "6e4f0797-3a64-42f0-a5b8-7a942c762136",
+      "name": "Field Extraction HybridAnalysis",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        380,
+        540
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "54061166-d71b-4e2b-936f-7bacd38ea78c",
+              "name": "mb_filename",
+              "value": "={{ $json.data[0].file_name }}",
+              "type": "string"
+            },
+            {
+              "id": "4552d64a-ed70-4a3a-9b9a-979f1ff7f5da",
+              "name": "mb_first_seen",
+              "value": "={{ $json.data[0].first_seen }}",
+              "type": "string"
+            },
+            {
+              "id": "548153a3-aa55-46e7-b374-40836294cc26",
+              "name": "mb_comment",
+              "value": "={{ $json.data[0].comment }}",
+              "type": "string"
+            },
+            {
+              "id": "f307cef4-eb7f-4fa7-a268-43af79597f2a",
+              "name": "mb_signature",
+              "value": "={{ $json.data[0].signature }}",
+              "type": "string"
+            },
+            {
+              "id": "bcd1e76d-f884-45c4-9c4d-8c5f2fc59d3a",
+              "name": "mb_link",
+              "value": "=https://bazaar.abuse.ch/sample/{{ $json.data[0].sha256_hash }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "3974369f-3c53-440f-966d-ddc73856ae27",
+      "name": "Field Extraction MalwareBaazar",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        380,
+        760
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "raw",
+        "jsonOutput": "{\n  \"html\": \"No MISP events have been found\"\n}\n",
+        "options": {}
+      },
+      "id": "0c235120-91e2-48bf-8c89-80d37d87fe4c",
+      "name": "Field Extraction MISP false",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        380,
+        1160
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "beb0c766-8592-4116-9fb3-00a4e1320132",
+              "name": "misp_info",
+              "value": "={{ $json.Event.info }}",
+              "type": "string"
+            },
+            {
+              "id": "d45c7bcf-c2a8-4ca6-81a0-dc2c7c5c3a74",
+              "name": "misp_link",
+              "value": "=https://misp.inthecyber.com/events/view/{{ $json.event_id }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "96691125-2d34-40e5-9890-93168b499845",
+      "name": "Field Extraction MISP true",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -80,
+        960
+      ]
+    },
+    {
+      "parameters": {
+        "aggregate": "aggregateAllItemData",
+        "destinationFieldName": "hb_data",
+        "options": {}
+      },
+      "id": "25290a62-ccb1-4994-85ca-2e032ed51414",
+      "name": "Aggregate Hybrid Analysis",
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [
+        180,
+        540
+      ]
+    },
+    {
+      "parameters": {
+        "aggregate": "aggregateAllItemData",
+        "destinationFieldName": "misp_data",
+        "options": {}
+      },
+      "id": "217e73ce-0f48-413f-a8b9-805c9874c2d0",
+      "name": "Aggregate MISP",
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [
+        180,
+        960
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "const htmlArray = [];\nfor (const item of $input.item.json.misp_data) {\n  console.log(item.misp_info)\n  console.log(item.misp_link)\n  const html = `\n        Hash found in <a href=\"${item.misp_link}\" target=\"_blank\">${item.misp_info}</a><br>\n    `;\n    // Add generated HTML to the array\n    htmlArray.push(html);\n}\n\nconst finalHtml = htmlArray.join('\\n');\n\nreturn { html: finalHtml };"
+      },
+      "id": "78f8ccc2-2c86-4249-91b9-0abef509fc33",
+      "name": "Prepare MISP HTML",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        380,
+        960
+      ]
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Aggregate": {
+      "main": [
+        [
+          {
+            "node": "HTML",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Field Extraction MISP true",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Field Extraction MISP false",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge": {
+      "main": [
+        [
+          {
+            "node": "Aggregate",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Keep Original Hash": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "VirusTotal Hash Search": {
+      "main": [
+        [
+          {
+            "node": "Field Extraction VirusTotal",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "MISP Hash Search": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Field Extraction VirusTotal": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 2
+          }
+        ]
+      ]
+    },
+    "HybridAnalysis Hash Search": {
+      "main": [
+        [
+          {
+            "node": "Aggregate Hybrid Analysis",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "MalwareBaazar Hash Search": {
+      "main": [
+        [
+          {
+            "node": "Field Extraction MalwareBaazar",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Field Extraction HybridAnalysis": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 3
+          }
+        ]
+      ]
+    },
+    "Field Extraction MalwareBaazar": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 5
+          }
+        ]
+      ]
+    },
+    "Field Extraction MISP false": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 7
+          }
+        ]
+      ]
+    },
+    "Field Extraction MISP true": {
+      "main": [
+        [
+          {
+            "node": "Aggregate MISP",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Aggregate Hybrid Analysis": {
+      "main": [
+        [
+          {
+            "node": "Field Extraction HybridAnalysis",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Aggregate MISP": {
+      "main": [
+        [
+          {
+            "node": "Prepare MISP HTML",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Prepare MISP HTML": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 6
+          }
+        ]
+      ]
+    },
+    "Execute Workflow Trigger": {
+      "main": [
+        [
+          {
+            "node": "Keep Original Hash",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "VirusTotal Hash Search",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "HybridAnalysis Hash Search",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "MalwareBaazar Hash Search",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "MISP Hash Search",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "96cc7529-c49b-45b6-a39c-8900778d2b09",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "f9840ed24cb417efbbb054fd3a3d632ab0351dce782a4daf8397f13882237b22"
+  },
+  "id": "vHXSPb9lJI5mSiiS",
+  "tags": []
+}

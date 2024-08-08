@@ -1,0 +1,715 @@
+{
+  "name": "IP Reputation Github",
+  "nodes": [
+    {
+      "parameters": {
+        "html": "<!DOCTYPE html>\n<html>\n  <head>\n    <meta charset=\"utf-8\">\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">\n    <title>Report</title>\n    <link rel=\"stylesheet\" href=\"https://cdn.jsdelivr.net/npm/bulma@1.0.1/css/bulma.min.css\">\n    <link rel=\"stylesheet\" href=\"https://cdn.jsdelivr.net/npm/bulma-prefers-dark@0.1.0/css/bulma-prefers-dark.min.css\">\n    <style>\n      @media (prefers-color-scheme: dark) {\n        html, body {\n          background-color: hsl(0, 0%, 21%);\n        }\n      }\n    </style>\n  </head>\n  <body>\n    <section class=\"hero is-fullheight\">\n        <div class=\"hero-body\">\n            <div class=\"container is-fluid content\">\n                <p class=\"title is-2\">\n                  Report - IP Analysis {{ $json.out[1]['ip_abuse'] }}\n                </p> \n                <p class=\"title is-3\">Shodan - <a href=\"https://www.shodan.io/host/{{ $json.out[1]['ip_abuse'] }}\" target=\"_blank\">Report</a></p> \n                <p>\n                  <strong>Hostnames:</strong> {{  $if($json.out[0].shodan_hostnames.isEmpty(),\"No hostnames have been found\",$json.out[0].shodan_hostnames) }}<br>\n                  <strong>Open ports:</strong> {{  $if($json.out[0].shodan_ports.isEmpty(), \"No ports have been found\",$json.out[0].shodan_ports) }}\n                </p>\n                <p class=\"title is-3\">AbuseIPDB - <a href=\"{{ $json.out[1].abuse_link }}\" target=\"_blank\">Report</a></p>\n                <p>\n                  <strong>Hostnames:</strong> {{  $if($json.out[1].abuse_hostnames.parseJson().isEmpty(),\"Information not found\",$json.out[1].abuse_hostnames.parseJson())}}<br>\n                  <strong>Abuse Confidence Score:</strong> {{  $json.out[1].abuse_ConfidenceScore }}<br>\n                  <strong>Usage Type:</strong> {{  $json.out[1].abuse_usage_type }}<br>\n                  <strong>Total reports:</strong> {{  $json.out[1].abuse_totalReports }}\n                </p>\n                <p class=\"title is-3\">VirusTotal - <a href=\"{{ $json.out[2].virustotal_link }}\" target=\"_blank\">Report</a></p>\n                <p>\n                  <strong>Malicious</strong> - {{  $if($json.out[2].last_analysis_stats,$json.out[2].last_analysis_stats.malicious,\"Information not found\") }}<br>\n                  <strong>Suspicious</strong> - {{  $if($json.out[2].last_analysis_stats,$json.out[2].last_analysis_stats.suspicious,\"Information not found\") }}<br>\n                  <strong>Undetected</strong> - {{  $if($json.out[2].last_analysis_stats,$json.out[2].last_analysis_stats.undetected,\"Information not found\") }}<br>\n                  <strong>Harmless</strong> - {{  $if($json.out[2].last_analysis_stats,$json.out[2].last_analysis_stats.harmless,\"Information not found\") }}<br>\n                  <strong>Last analysis date</strong> - {{ $if($json.out[2].virustotal_date.isEmpty(),\"Information  not found\",DateTime.fromSeconds($json.out[2].virustotal_date.toNumber()).toISO()) }}\n                </p>\n                <p class=\"title is-3\">MISP</p>\n                <p>{{ $json.out[3].html }}</p>       \n            </div>\n        </div>\n        <div class=\"hero-foot\">\n            <footer class=\"footer\">\n                <div class=\"content has-text-centered\">\n                  <p>\n                    Built with ❤️ by BlueTeam @ <a href=\"https://www.inthecybergroup.com/en/\" target=\"_blank\">InTheCyber</a>\n                  </p>\n                </div>\n            </footer>\n        </div>\n    </section>\n  </body>\n</html>"
+      },
+      "id": "f4091ed6-8753-43ea-be73-ac80d8e1f31d",
+      "name": "HTML",
+      "type": "n8n-nodes-base.html",
+      "typeVersion": 1.2,
+      "position": [
+        1400,
+        320
+      ]
+    },
+    {
+      "parameters": {
+        "aggregate": "aggregateAllItemData",
+        "destinationFieldName": "out",
+        "options": {}
+      },
+      "id": "6a736f10-4bf0-41a4-b91c-ad3c37074d01",
+      "name": "Aggregate",
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [
+        1120,
+        320
+      ]
+    },
+    {
+      "parameters": {
+        "numberInputs": 6
+      },
+      "id": "0eaed2e5-d688-4f68-84f5-46812ad07ab2",
+      "name": "Merge",
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3,
+      "position": [
+        880,
+        280
+      ]
+    },
+    {
+      "parameters": {},
+      "id": "02e298d6-7a8f-4d54-b47d-9a2417230685",
+      "name": "Execute Workflow Trigger",
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1,
+      "position": [
+        -1100,
+        440
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "9a6236b8-13fc-4636-9a42-a548c2adb72d",
+              "name": "shodan_ports",
+              "value": "IP not in Shodan",
+              "type": "string"
+            },
+            {
+              "id": "138a9e02-ae46-4f39-9067-dc628d591f52",
+              "name": "shodan_domains",
+              "value": "IP not in Shodan",
+              "type": "string"
+            },
+            {
+              "id": "bd3a31bf-705c-4ec4-90c8-cdcbdeb16073",
+              "name": "shodan_hostnames",
+              "value": "IP not in Shodan",
+              "type": "string"
+            },
+            {
+              "id": "11f5a921-4af0-42cd-b2a9-5bf054fb9198",
+              "name": "type_shodan",
+              "value": "Shodan",
+              "type": "string"
+            },
+            {
+              "id": "a356c7de-0665-4a06-9feb-0fa731e16434",
+              "name": "shodan_link",
+              "value": "",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "86309574-56dc-40e1-aa66-6647d0e95d15",
+      "name": "Field Extraction Shodan False",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        340,
+        40
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "9a6236b8-13fc-4636-9a42-a548c2adb72d",
+              "name": "shodan_ports",
+              "value": "={{ $json.ports }}",
+              "type": "array"
+            },
+            {
+              "id": "bd3a31bf-705c-4ec4-90c8-cdcbdeb16073",
+              "name": "shodan_hostnames",
+              "value": "={{ $json.hostnames }}",
+              "type": "array"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "e1710833-502f-4657-97f1-02a387ca8c85",
+      "name": "Field Extraction Shodan True",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        340,
+        -180
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "06898a34-2490-42fb-b8e3-cd4f319f779f",
+              "leftValue": "={{ $json.error }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notExists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "568788f6-195d-498c-bb47-fb711be21c75",
+      "name": "If Shodan",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        -280,
+        -80
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "20a4c3ac-1893-4ffd-9101-5cd8a27fa070",
+              "leftValue": "={{ $json.Event }}",
+              "rightValue": "",
+              "operator": {
+                "type": "object",
+                "operation": "exists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "7bafc8b9-c200-4df2-8def-1dc28b3da4f0",
+      "name": "If MISP",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        -300,
+        880
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "bbb4eee9-43d8-4740-a141-01ca49db4294",
+              "name": "abuse_ConfidenceScore",
+              "value": "={{ $json.data.abuseConfidenceScore }}",
+              "type": "number"
+            },
+            {
+              "id": "9b4e90d0-c893-4818-a1d2-7e555837aa23",
+              "name": "abuse_totalReports",
+              "value": "={{ $json.data.totalReports }}",
+              "type": "number"
+            },
+            {
+              "id": "eb227d17-9f60-4434-8ce5-3ef9fd38997f",
+              "name": "ip_abuse",
+              "value": "={{ $json.data.ipAddress }}",
+              "type": "string"
+            },
+            {
+              "id": "41b92997-cf2f-4367-b304-580ab5bdd632",
+              "name": "abuse_link",
+              "value": "=https://www.abuseipdb.com/check/{{ $json.data.ipAddress }}",
+              "type": "string"
+            },
+            {
+              "id": "00b3a4f2-2fd1-4325-91e9-9dbbc824455d",
+              "name": "abuse_hostnames",
+              "value": "={{ $json.data.hostnames }}",
+              "type": "string"
+            },
+            {
+              "id": "934ec58e-a86f-492a-9150-3275b7727995",
+              "name": "abuse_usage_type",
+              "value": "={{ $json.data.usageType }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "7730ef52-8bab-4cdf-8d28-8ce755f104d0",
+      "name": "Field Extraction AbuseIPDB",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        340,
+        220
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "b5138759-427c-4895-8fb9-37cc8d4d1b6d",
+              "name": "last_analysis_stats",
+              "value": "={{ $json.data.attributes.last_analysis_stats }}",
+              "type": "object"
+            },
+            {
+              "id": "bdd3e115-0ab0-4b90-b66c-8f4fe8587c88",
+              "name": "virustotal_link",
+              "value": "=https://www.virustotal.com/gui/ip-address/{{ $json.data.id }}",
+              "type": "string"
+            },
+            {
+              "id": "5110ecd9-7112-4f5b-af31-10be4ac9a0fc",
+              "name": "virustotal_date",
+              "value": "={{ $json.data.attributes.last_analysis_date }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "5af1d220-4cc7-45c2-b083-a23f55277851",
+      "name": "Field Extraction VirusTotal",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        340,
+        440
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "beb0c766-8592-4116-9fb3-00a4e1320132",
+              "name": "misp_info",
+              "value": "={{ $json.Event.info }}",
+              "type": "string"
+            },
+            {
+              "id": "d45c7bcf-c2a8-4ca6-81a0-dc2c7c5c3a74",
+              "name": "misp_link",
+              "value": "=https://misp.inthecyber.com/events/view/{{ $json.event_id }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "98f690c5-90c5-44bf-8d84-018ee9fb8c15",
+      "name": "Field Extraction MISP True",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -20,
+        640
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "raw",
+        "jsonOutput": "{\n  \"html\": \"No MISP events have been found\"\n}\n",
+        "options": {}
+      },
+      "id": "e8cdacb4-d2e2-419e-85f3-3dc821773380",
+      "name": "Field Extraction MISP False",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        340,
+        880
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "const htmlArray = [];\nfor (const item of $input.item.json.misp_data) {\n  const html = `IP found in <a href=\"${item.misp_link}\" target=\"_blank\">${item.misp_info}</a><br>`;\n    htmlArray.push(html);\n}\nconst finalHtml = htmlArray.join('\\n');\nreturn { html: finalHtml };"
+      },
+      "id": "68d180cd-455b-4e57-b8c6-3a4538364c92",
+      "name": "Prepare MISP HTML",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        340,
+        640
+      ]
+    },
+    {
+      "parameters": {
+        "aggregate": "aggregateAllItemData",
+        "destinationFieldName": "misp_data",
+        "options": {}
+      },
+      "id": "7c123696-41f6-41be-8bec-a73956d94e48",
+      "name": "Aggregate MISP items",
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [
+        160,
+        640
+      ]
+    },
+    {
+      "parameters": {
+        "url": "=https://api.shodan.io/shodan/host/{{ $json.query.ip }}",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "key",
+              "value": "<your-api-key>"
+            }
+          ]
+        },
+        "options": {
+          "response": {
+            "response": {
+              "neverError": true,
+              "responseFormat": "json"
+            }
+          }
+        }
+      },
+      "id": "1aae4ef1-9e69-40da-8574-4b70593712b5",
+      "name": "Shodan IP Search",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -500,
+        -80
+      ],
+      "alwaysOutputData": false
+    },
+    {
+      "parameters": {
+        "url": "https://api.abuseipdb.com/api/v2/check",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "maxAgeInDays",
+              "value": "90"
+            },
+            {
+              "name": "ipAddress",
+              "value": "={{ $json.query.ip }}"
+            }
+          ]
+        },
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Key",
+              "value": "<your-api-key>"
+            },
+            {
+              "name": "Accept",
+              "value": "application/json"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "88172286-7cf9-491d-a536-a8c4fd2a864b",
+      "name": "AbuseIPDB IP Search",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -500,
+        220
+      ]
+    },
+    {
+      "parameters": {
+        "curlImport": "",
+        "httpVariantWarning": "",
+        "method": "GET",
+        "url": "=https://www.virustotal.com/api/v3/ip_addresses/{{ $json.query.ip }}",
+        "": "",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "virusTotalApi",
+        "provideSslCertificates": false,
+        "sendQuery": false,
+        "sendHeaders": false,
+        "sendBody": false,
+        "options": {},
+        "infoMessage": ""
+      },
+      "id": "01520fff-3d46-48bf-ae9d-425e63332760",
+      "name": "VirusTotal IP Search",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -500,
+        440
+      ],
+      "extendsCredential": "virusTotalApi",
+      "credentials": {
+        "virusTotalApi": {
+          "id": "sJCO2wel5Jh9CMuq",
+          "name": "VirusTotal account Github"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "search",
+        "value": "={{ $json.query.ip }}",
+        "additionalFields": {}
+      },
+      "id": "6ff2f5fc-07bd-464d-a0ae-e52743ebad99",
+      "name": "MISP IP Search",
+      "type": "n8n-nodes-base.misp",
+      "typeVersion": 1,
+      "position": [
+        -500,
+        880
+      ],
+      "alwaysOutputData": true,
+      "credentials": {
+        "mispApi": {
+          "id": "MUYZzqpUvD41rZ4X",
+          "name": "MISP account Github"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Aggregate": {
+      "main": [
+        [
+          {
+            "node": "HTML",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge": {
+      "main": [
+        [
+          {
+            "node": "Aggregate",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Field Extraction Shodan False": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Field Extraction Shodan True": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If Shodan": {
+      "main": [
+        [
+          {
+            "node": "Field Extraction Shodan True",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Field Extraction Shodan False",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If MISP": {
+      "main": [
+        [
+          {
+            "node": "Field Extraction MISP True",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Field Extraction MISP False",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Field Extraction AbuseIPDB": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 2
+          }
+        ]
+      ]
+    },
+    "Field Extraction VirusTotal": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 3
+          }
+        ]
+      ]
+    },
+    "Field Extraction MISP True": {
+      "main": [
+        [
+          {
+            "node": "Aggregate MISP items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Field Extraction MISP False": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 5
+          }
+        ]
+      ]
+    },
+    "Prepare MISP HTML": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 4
+          }
+        ]
+      ]
+    },
+    "Aggregate MISP items": {
+      "main": [
+        [
+          {
+            "node": "Prepare MISP HTML",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Shodan IP Search": {
+      "main": [
+        [
+          {
+            "node": "If Shodan",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AbuseIPDB IP Search": {
+      "main": [
+        [
+          {
+            "node": "Field Extraction AbuseIPDB",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "VirusTotal IP Search": {
+      "main": [
+        [
+          {
+            "node": "Field Extraction VirusTotal",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "MISP IP Search": {
+      "main": [
+        [
+          {
+            "node": "If MISP",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Execute Workflow Trigger": {
+      "main": [
+        [
+          {
+            "node": "Shodan IP Search",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "AbuseIPDB IP Search",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "VirusTotal IP Search",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "MISP IP Search",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "345f5d69-6f70-461c-a825-76667e75d8b5",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "f9840ed24cb417efbbb054fd3a3d632ab0351dce782a4daf8397f13882237b22"
+  },
+  "id": "LCcnVW9SbJXP1PcM",
+  "tags": []
+}

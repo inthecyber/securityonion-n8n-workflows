@@ -1,0 +1,748 @@
+{
+  "name": "Domain Reputation",
+  "nodes": [
+    {
+      "parameters": {
+        "html": "<!DOCTYPE html>\n<html>\n  <head>\n    <meta charset=\"utf-8\">\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">\n    <title>Report</title>\n    <link rel=\"stylesheet\" href=\"https://cdn.jsdelivr.net/npm/bulma@1.0.1/css/bulma.min.css\">\n    <link rel=\"stylesheet\" href=\"https://cdn.jsdelivr.net/npm/bulma-prefers-dark@0.1.0/css/bulma-prefers-dark.min.css\">\n    <style>\n      @media (prefers-color-scheme: dark) {\n        html, body {\n          background-color: hsl(0, 0%, 21%);\n        }\n      }\n    </style>\n  </head>\n  <body>\n    <section class=\"hero is-fullheight\">\n        <div class=\"hero-body\">\n            <div class=\"container is-fluid content\">\n                <p class=\"title is-2\">\n                  Report - Domain Analysis {{ $json.out[0]['domain'] }}\n                </p> \n                <p class=\"title is-3\">Shodan - <a href=\"https://www.shodan.io/search?query=hostname:{{ $json.out[0]['domain'] }}\" target=\"_blank\">Report</a></p> \n                <p>\n                  {{ $json.out[1].html }}\n                </p>\n                <p class=\"title is-3\">VirusTotal - <a href=\"{{ $json.out[2].virustotal_link }}\" target=\"_blank\">Report</a></p>\n                <p>\n                  <strong>Malicious:</strong> {{  $if($json.out[2].last_analysis_stats,$json.out[2].last_analysis_stats.malicious,\"Information not found\") }}<br>\n                  <strong>Suspicious:</strong> {{  $if($json.out[2].last_analysis_stats,$json.out[2].last_analysis_stats.suspicious,\"Information not found\") }}<br>\n                  <strong>Undetected:</strong> {{  $if($json.out[2].last_analysis_stats,$json.out[2].last_analysis_stats.undetected,\"Information not found\") }}<br>\n                  <strong>Harmless:</strong> {{  $if($json.out[2].last_analysis_stats,$json.out[2].last_analysis_stats.harmless,\"Information not found\") }}<br>\n                  <strong>Last analysis date</strong> {{ $if($json.out[2].virustotal_date.isEmpty(),\"Information  not found\",DateTime.fromSeconds($json.out[2].virustotal_date.toNumber()).toISO()) }}\n                </p>\n                <p class=\"title is-3\">Urlscan - <a href=\"https://urlscan.io/search/#{{ $json.out[0]['domain'] }}\" target=\"_blank\">Report</a></p>\n                <p>\n                    <strong>Last 30 days activity:</strong><br>\n                    {{ $json.out[3].html }}\n                </p>\n                <p class=\"title is-3\">MISP</p>\n                <p>{{ $json.out[4].html }}</p>       \n            </div>\n        </div>\n        <div class=\"hero-foot\">\n            <footer class=\"footer\">\n                <div class=\"content has-text-centered\">\n                  <p>\n                    Built with ❤️ by BlueTeam @ <a href=\"https://www.inthecybergroup.com/en/\" target=\"_blank\">InTheCyber</a>\n                  </p>\n                </div>\n            </footer>\n        </div>\n    </section>\n  </body>\n</html>"
+      },
+      "id": "0665b26e-b14e-4ccb-8d11-f68388d0678e",
+      "name": "HTML",
+      "type": "n8n-nodes-base.html",
+      "typeVersion": 1.2,
+      "position": [
+        2000,
+        -720
+      ]
+    },
+    {
+      "parameters": {
+        "aggregate": "aggregateAllItemData",
+        "destinationFieldName": "out",
+        "options": {}
+      },
+      "id": "f4629e5f-7a8d-41bf-be3a-0c4ff81a468d",
+      "name": "Aggregate",
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [
+        1720,
+        -720
+      ]
+    },
+    {
+      "parameters": {},
+      "id": "87543b70-5160-4d5b-a967-0b0773b0ea7d",
+      "name": "Execute Workflow Trigger",
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1,
+      "position": [
+        -1180,
+        -160
+      ]
+    },
+    {
+      "parameters": {
+        "numberInputs": 8
+      },
+      "id": "48c01b65-a388-42d4-a5a0-e65b40bdc263",
+      "name": "Merge",
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3,
+      "position": [
+        1440,
+        -800
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "32ae4573-b0a6-4e8b-9995-e111c8441534",
+              "name": "domain",
+              "value": "={{ $json.query.domain }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "3f76a66c-0790-4a12-9c6e-5019127d237b",
+      "name": "Keep Original Domain",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -460,
+        -800
+      ]
+    },
+    {
+      "parameters": {
+        "url": "=https://api.shodan.io/shodan/host/search?&query=hostname:{{ $json.query.domain }}",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "key",
+              "value": "<your-api-key>"
+            }
+          ]
+        },
+        "options": {
+          "response": {
+            "response": {
+              "neverError": true,
+              "responseFormat": "json"
+            }
+          }
+        }
+      },
+      "id": "37670acb-4265-4d81-83ba-1cadcf2ced73",
+      "name": "Shodan Domain Search",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -460,
+        -580
+      ],
+      "alwaysOutputData": false
+    },
+    {
+      "parameters": {
+        "curlImport": "",
+        "httpVariantWarning": "",
+        "method": "GET",
+        "url": "=https://www.virustotal.com/api/v3/domains/{{ $json.query.domain }}",
+        "": "",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "virusTotalApi",
+        "provideSslCertificates": false,
+        "sendQuery": false,
+        "sendHeaders": false,
+        "sendBody": false,
+        "options": {
+          "response": {
+            "response": {
+              "fullResponse": false,
+              "neverError": true,
+              "responseFormat": "autodetect"
+            }
+          }
+        },
+        "infoMessage": ""
+      },
+      "id": "3524f029-5b48-4f41-bb55-60fd34aaca1c",
+      "name": "VirusTotal Domain Search",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -460,
+        -280
+      ],
+      "extendsCredential": "virusTotalApi",
+      "credentials": {
+        "virusTotalApi": {
+          "id": "sJCO2wel5Jh9CMuq",
+          "name": "VirusTotal account Github"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "=https://urlscan.io/api/v1/search/?q=domain:{{ $json.query.domain }} AND date:>now-30d",
+        "options": {}
+      },
+      "id": "712d3e6b-3ca4-4458-baf3-bffa526e30c6",
+      "name": "urlscan Domain Search",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -460,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "search",
+        "value": "={{ $json.query.domain }}",
+        "additionalFields": {}
+      },
+      "id": "4ece484a-e932-411f-832d-a6fa4a33a361",
+      "name": "MISP Domain Search",
+      "type": "n8n-nodes-base.misp",
+      "typeVersion": 1,
+      "position": [
+        -460,
+        440
+      ],
+      "alwaysOutputData": true,
+      "credentials": {
+        "mispApi": {
+          "id": "MUYZzqpUvD41rZ4X",
+          "name": "MISP account Github"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "7a154b88-0238-47bf-ad18-1665c1bac078",
+              "leftValue": "={{ $json.total }}",
+              "rightValue": 0,
+              "operator": {
+                "type": "number",
+                "operation": "notEquals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "97db2869-0255-42ea-aaea-fdbbada53bf2",
+      "name": "If Shodan",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        -240,
+        -580
+      ],
+      "alwaysOutputData": false
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "b6e4c45d-06a9-4ed1-962c-4fcfe721e2a5",
+              "leftValue": "={{ $json.total }}",
+              "rightValue": 0,
+              "operator": {
+                "type": "number",
+                "operation": "notEquals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "ab2384d2-3419-4dba-8748-13d04b6fa428",
+      "name": "If urlscan",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        -240,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "20a4c3ac-1893-4ffd-9101-5cd8a27fa070",
+              "leftValue": "={{ $json.Event }}",
+              "rightValue": "",
+              "operator": {
+                "type": "object",
+                "operation": "exists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "6250d198-b585-4f27-862c-5fd316229507",
+      "name": "If MISP",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        -240,
+        440
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "const htmlArray = [];\nfor (const item of $input.item.json.matches) {\n  const html = `\n        <strong>Hostnames</strong>: ${item.hostnames}<br>\n        <strong>IP</strong>: ${item.ip_str}<br>\n        <strong>Org</strong>: ${item.org}<br>\n        <strong>Timestamp</strong>: ${item.timestamp}\n    `;\n    // Add generated HTML to the array\n    htmlArray.push(html);\n}\n\nconst finalHtml = htmlArray.join('\\n');\n\nreturn { html: finalHtml };"
+      },
+      "id": "b92e833e-287a-4f81-9cd5-5a306638e55c",
+      "name": "Shodan HTML",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        400,
+        -700
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "const htmlArray = [];\nfor (const item of $input.item.json.results) {\n  const html = `\n        ${item.page.domain} - URL: <u>${item.page.url}</u> - <a href=\"${item.screenshot}\" target=\"_blank\">Screenshot URL</a> - <a href=\"https://urlscan.io/result/${item._id}\" target=\"_blank\">Scan URL</a><br>\n    `;\n    // Add generated HTML to the array\n    htmlArray.push(html);\n}\n\nconst finalHtml = htmlArray.join('\\n');\n\nreturn { html: finalHtml };"
+      },
+      "id": "93984c8e-3629-4fe6-9a13-6edf2517ff16",
+      "name": "urlscan HTML",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        400,
+        -80
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "const htmlArray = [];\nfor (const item of $input.item.json.misp_data) {\n  console.log(item.misp_info)\n  console.log(item.misp_link)\n  const html = `\n        Domain found in <a href=\"${item.misp_link}\" target=\"_blank\">${item.misp_info}</a><br>\n    `;\n    // Add generated HTML to the array\n    htmlArray.push(html);\n}\n\nconst finalHtml = htmlArray.join('\\n');\n\nreturn { html: finalHtml };"
+      },
+      "id": "cdd56182-9045-409a-996e-cbab151a9ed3",
+      "name": "MISP HTML",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        400,
+        380
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "9a6236b8-13fc-4636-9a42-a548c2adb72d",
+              "name": "html",
+              "value": "=Information not found<br>",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "ef7259ca-5ecd-498e-8390-f1ae1e41f377",
+      "name": "Shodan If false",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        80,
+        -460
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "b5138759-427c-4895-8fb9-37cc8d4d1b6d",
+              "name": "last_analysis_stats",
+              "value": "={{ $json.data.attributes.last_analysis_stats }}",
+              "type": "object"
+            },
+            {
+              "id": "bdd3e115-0ab0-4b90-b66c-8f4fe8587c88",
+              "name": "virustotal_link",
+              "value": "=https://www.virustotal.com/gui/domain/{{ $json.data.id }}",
+              "type": "string"
+            },
+            {
+              "id": "5110ecd9-7112-4f5b-af31-10be4ac9a0fc",
+              "name": "virustotal_date",
+              "value": "={{ $json.data.attributes.last_analysis_date }}",
+              "type": "string"
+            },
+            {
+              "id": "c6ed836f-1918-4721-afdf-20cbc9164693",
+              "name": "virustotal_domain",
+              "value": "={{ $json.data.id }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "a7f9bfc4-9936-4417-bf7f-b47b18d2d66f",
+      "name": "Field Extraction VirusTotal",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        80,
+        -280
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "32e263b2-3451-4a40-a396-5984662fa731",
+              "name": "html",
+              "value": "Domain not in urlscan<br>",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "46317eb0-83cd-4e3f-b3c6-dd91937975ac",
+      "name": "urlscan If False",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        400,
+        140
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "raw",
+        "jsonOutput": "{\n  \"html\": \"No MISP events have been found<br>\"\n}\n",
+        "options": {}
+      },
+      "id": "af9c3ec1-2ec8-4a83-a685-47270087a4ae",
+      "name": "MISP If False",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        400,
+        600
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "beb0c766-8592-4116-9fb3-00a4e1320132",
+              "name": "misp_info",
+              "value": "={{ $json.Event.info }}",
+              "type": "string"
+            },
+            {
+              "id": "d45c7bcf-c2a8-4ca6-81a0-dc2c7c5c3a74",
+              "name": "misp_link",
+              "value": "=https://misp.inthecyber.com/events/view/{{ $json.event_id }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "60a0fbe2-15e6-456e-900e-60145f153821",
+      "name": "Field Extraction MISP",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        60,
+        380
+      ]
+    },
+    {
+      "parameters": {
+        "aggregate": "aggregateAllItemData",
+        "destinationFieldName": "misp_data",
+        "options": {}
+      },
+      "id": "cba02512-c1ca-4345-a83d-7124bf2211db",
+      "name": "Aggregate MISP",
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [
+        220,
+        380
+      ]
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Aggregate": {
+      "main": [
+        [
+          {
+            "node": "HTML",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge": {
+      "main": [
+        [
+          {
+            "node": "Aggregate",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Keep Original Domain": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Shodan Domain Search": {
+      "main": [
+        [
+          {
+            "node": "If Shodan",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "VirusTotal Domain Search": {
+      "main": [
+        [
+          {
+            "node": "Field Extraction VirusTotal",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "urlscan Domain Search": {
+      "main": [
+        [
+          {
+            "node": "If urlscan",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "MISP Domain Search": {
+      "main": [
+        [
+          {
+            "node": "If MISP",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If Shodan": {
+      "main": [
+        [
+          {
+            "node": "Shodan HTML",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Shodan If false",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If urlscan": {
+      "main": [
+        [
+          {
+            "node": "urlscan HTML",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "urlscan If False",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If MISP": {
+      "main": [
+        [
+          {
+            "node": "Field Extraction MISP",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "MISP If False",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Shodan HTML": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "urlscan HTML": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 4
+          }
+        ]
+      ]
+    },
+    "MISP HTML": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 6
+          }
+        ]
+      ]
+    },
+    "Shodan If false": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 2
+          }
+        ]
+      ]
+    },
+    "Field Extraction VirusTotal": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 3
+          }
+        ]
+      ]
+    },
+    "urlscan If False": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 5
+          }
+        ]
+      ]
+    },
+    "MISP If False": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 7
+          }
+        ]
+      ]
+    },
+    "Field Extraction MISP": {
+      "main": [
+        [
+          {
+            "node": "Aggregate MISP",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Aggregate MISP": {
+      "main": [
+        [
+          {
+            "node": "MISP HTML",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Execute Workflow Trigger": {
+      "main": [
+        [
+          {
+            "node": "Keep Original Domain",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Shodan Domain Search",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "VirusTotal Domain Search",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "urlscan Domain Search",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "MISP Domain Search",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "fa6bc327-3407-4fa6-833e-581e16d2768a",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "f9840ed24cb417efbbb054fd3a3d632ab0351dce782a4daf8397f13882237b22"
+  },
+  "id": "dB4EnnlOqj0s8EPV",
+  "tags": []
+}
