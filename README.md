@@ -8,6 +8,8 @@ Recognizing the value and impact of automation in the SOC environment, this proj
 
 Any contribution, feedback or idea is welcome.
 
+You can find a more detailed explanation of this project in our [blog post](https://posts.inthecyber.com/automated-threat-intelligence-analysis-with-n8n-and-security-onion-1f4e7b41327e).
+
 ### Technical Details
 
 * `workflows/IP_Reputation.json` is the **IP workflow** described in the blog post.
