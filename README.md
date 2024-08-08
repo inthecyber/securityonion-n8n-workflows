@@ -27,7 +27,7 @@ We used a self-hosted instance of n8n 1.50.0 and Security Onion 2.4.90 for this 
 {"description":"CVE Info","icon":"fa-external-link-alt","links":["https://<your-n8n-instance-name>/webhook/reputation?cve={value}"],"name":"CVE Info","target":"_blank"}
 ```
 
-We put `<your-api-key>` inside every field in the workflows that required the use of API. Please change them accordingly and create the appropriate credentials if the nodes support them.
+We put `<your-api-key>` inside every field in the workflows that required the use of API. Please change them accordingly and create the appropriate credentials if the nodes support them. Finally, we put <your-workflow-id> in the **Dispatcher** workflow, please change these values accordingly to your environment. 
 
 ### Contributors
 
