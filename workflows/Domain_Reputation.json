@@ -149,7 +149,7 @@
     },
     {
       "parameters": {
-        "url": "=https://urlscan.io/api/v1/search/?q=domain:{{ $json.query.domain }} AND date:>now-30d",
+        "url": "=https://urlscan.io/api/v1/search/?q=page.domain:{{ $json.query.domain }} AND date:>now-30d",
         "options": {}
       },
       "id": "712d3e6b-3ca4-4458-baf3-bffa526e30c6",
