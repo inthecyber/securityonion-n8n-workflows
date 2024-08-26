@@ -284,7 +284,7 @@
     {
       "parameters": {
         "mode": "runOnceForEachItem",
-        "jsCode": "const htmlArray = [];\nfor (const item of $input.item.json.matches) {\n  const html = `\n        <strong>Hostnames</strong>: ${item.hostnames}<br>\n        <strong>IP</strong>: ${item.ip_str}<br>\n        <strong>Org</strong>: ${item.org}<br>\n        <strong>Timestamp</strong>: ${item.timestamp}\n    `;\n    // Add generated HTML to the array\n    htmlArray.push(html);\n}\n\nconst finalHtml = htmlArray.join('\\n');\n\nreturn { html: finalHtml };"
+        "jsCode": "const htmlArray = [];\nfor (const item of $input.item.json.matches) {\n  const html = `\n        <strong>Hostnames</strong>: ${item.hostnames}<br>\n        <strong>IP</strong>: ${item.ip_str}<br>\n        <strong>Org</strong>: ${item.org}<br>\n        <strong>Timestamp</strong>: ${item.timestamp}<br>\n        <br>\n    `;\n    // Add generated HTML to the array\n    htmlArray.push(html);\n}\n\nconst finalHtml = htmlArray.join('\\n');\n\nreturn { html: finalHtml };"
       },
       "id": "b92e833e-287a-4f81-9cd5-5a306638e55c",
       "name": "Shodan HTML",
