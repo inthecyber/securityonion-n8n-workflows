@@ -8,7 +8,7 @@ Recognizing the value and impact of automation in the SOC environment, this proj
 
 Any contribution, feedback or idea is welcome.
 
-You can find a more detailed explanation of this project in our [blog post](https://posts.inthecyber.com/automated-threat-intelligence-analysis-with-n8n-and-security-onion-1f4e7b41327e).
+You can find a more detailed explanation of this project in our [blog post](https://posts.inthecyber.com/automated-threat-intelligence-analysis-with-n8n-and-security-onion-a157a7c85ca7).
 
 ### Technical Details
 
