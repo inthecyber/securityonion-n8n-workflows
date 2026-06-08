@@ -1,17 +1,17 @@
 {
-  "name": "Hash Reputation github",
+  "name": "Hash Reputation",
   "nodes": [
     {
       "parameters": {
         "html": "<!DOCTYPE html>\n<html>\n  <head>\n    <meta charset=\"utf-8\">\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">\n    <title>Report</title>\n    <link rel=\"stylesheet\" href=\"https://cdn.jsdelivr.net/npm/bulma@1.0.1/css/bulma.min.css\">\n    <link rel=\"stylesheet\" href=\"https://cdn.jsdelivr.net/npm/bulma-prefers-dark@0.1.0/css/bulma-prefers-dark.min.css\">\n    <style>\n      @media (prefers-color-scheme: dark) {\n        html, body {\n          background-color: hsl(0, 0%, 21%);\n        }\n      }\n    </style>\n  </head>\n  <body>\n    <section class=\"hero is-fullheight\">\n        <div class=\"hero-body\">\n            <div class=\"container is-fluid content\">\n                <p class=\"title is-2\">\n                  Report - Hash Analysis {{ $json.out[0]['hash'] }}\n                </p> \n                <p class=\"title is-3\">VirusTotal - <a href=\"{{ $json.out[1].virustotal_link }}\" target=\"_blank\">Report</a></p> \n                <p>\n                  <strong>Filenames:</strong> {{  $if($json.out[1].names,$json.out[1].names,\"Information not found\") }}<br>\n                  <strong>Malicious:</strong> {{  $if($json.out[1].last_analysis_stats,$json.out[1].last_analysis_stats.malicious,\"Information not found\") }}<br>\n                  <strong>Suspicious:</strong> {{  $if($json.out[1].last_analysis_stats,$json.out[1].last_analysis_stats.suspicious,\"Information not found\") }}<br>\n                  <strong>Undetected:</strong> {{  $if($json.out[1].last_analysis_stats,$json.out[1].last_analysis_stats.undetected,\"Information not found\") }}<br>\n                  <strong>Harmless:</strong> {{  $if($json.out[1].last_analysis_stats,$json.out[1].last_analysis_stats.harmless,\"Information not found\") }}<br>\n                  <strong>Last analysis date</strong> {{ $if($json.out[1].virustotal_date.isEmpty(),\"Information  not found\",DateTime.fromSeconds($json.out[1].virustotal_date.toNumber()).toISO()) }}\n                 </p>\n                <p class=\"title is-3\">HybridAnalysis - <a href=\"https://www.hybrid-analysis.com/search?query={{ $json.out[2].hb_sha256 }}\" target=\"_blank\">Report</a></p>\n                <p>\n                  <strong>Last submission name:</strong> {{  $if($json.out[2].submit_name.isEmpty(),\"Information not found\",$json.out[2].submit_name) }}<br>\n                  <strong>Last submission VX family:</strong> {{  $if($json.out[2].hb_vx_family.isEmpty(),\"Information not found\",$json.out[2].hb_vx_family) }}<br>\n                  <strong>Last submission verdict:</strong> {{  $if($json.out[2].hb_verdict.isEmpty(),\"Information not found\",$json.out[2].hb_verdict) }}<br>\n                  <strong>Last submission threat score:</strong> {{  $if($json.out[2].hb_threat_score.isEmpty(),\"Information not found\",$json.out[2].hb_threat_score) }}<br>\n                  <strong>Last analysis date</strong> {{ $if($json.out[2].hb_submissions_date.isEmpty(),\"Information not found\",$json.out[2].hb_submissions_date) }}\n                </p>\n                <p class=\"title is-3\">Malware Bazaar - <a href=\"{{ $json.out[3].mb_link }}\" target=\"_blank\">Report</a></p>\n                <p>\n                  <strong>Last hash submitted filename:</strong> {{ $if($json.out[3].mb_filename.isEmpty(),\"Information not found\",$json.out[3].mb_filename) }}<br>\n                  <strong>Last hash submitted first seen:</strong> {{ $if($json.out[3].mb_first_seen.isEmpty(),\"Information not found\",$json.out[3].mb_first_seen) }}<br>\n                  <strong>Last hash submitted comment:</strong> {{ $if($json.out[3].mb_comment.isEmpty(),\"Information not found\",$json.out[3].mb_comment) }}<br>\n                  <strong>Last hash submitted signature:</strong> {{ $if($json.out[3].mb_signature.isEmpty(),\"Information not found\",$json.out[3].mb_signature) }}\n                </p>\n                <p class=\"title is-3\">MISP</p>\n                <p> {{ $json.out[4].html }}</p>       \n            </div>\n        </div>\n        <div class=\"hero-foot\">\n            <footer class=\"footer\">\n                <div class=\"content has-text-centered\">\n                  <p>\n                    Built with ❤️ by BlueTeam @ <a href=\"https://www.inthecybergroup.com/en/\" target=\"_blank\">InTheCyber</a>\n                  </p>\n                </div>\n            </footer>\n        </div>\n    </section>\n  </body>\n</html>"
       },
-      "id": "a229d80c-461e-41af-9ae6-b83b2410545a",
+      "id": "97525cf7-78b8-46ea-aa1e-ba415d5ccd90",
       "name": "HTML",
       "type": "n8n-nodes-base.html",
       "typeVersion": 1.2,
       "position": [
         1520,
-        260
+        272
       ]
     },
     {
@@ -20,13 +20,13 @@
         "destinationFieldName": "out",
         "options": {}
       },
-      "id": "c9970ab0-c38b-4bb6-a1d0-eb8d9ce5d8f4",
+      "id": "48eda9d9-f66e-42ae-b869-500f5d5d4cba",
       "name": "Aggregate",
       "type": "n8n-nodes-base.aggregate",
       "typeVersion": 1,
       "position": [
-        1220,
-        260
+        1232,
+        272
       ]
     },
     {
@@ -53,37 +53,26 @@
         },
         "options": {}
       },
-      "id": "e2c11a8e-f36e-4c98-a3cc-834813f6b1d9",
+      "id": "2247b0b5-f072-4cdd-956e-26a7ebcc4e48",
       "name": "If",
       "type": "n8n-nodes-base.if",
       "typeVersion": 2,
       "position": [
-        -360,
-        1140
-      ]
-    },
-    {
-      "parameters": {},
-      "id": "8e6033d7-8326-4926-b409-9d515ad4c26b",
-      "name": "Execute Workflow Trigger",
-      "type": "n8n-nodes-base.executeWorkflowTrigger",
-      "typeVersion": 1,
-      "position": [
-        -1280,
-        680
+        -368,
+        1152
       ]
     },
     {
       "parameters": {
         "numberInputs": 8
       },
-      "id": "33886ed0-a0f8-4330-8889-2cbc03204341",
+      "id": "3ca2a9ab-8bba-4a93-87f9-158bc97c8af4",
       "name": "Merge",
       "type": "n8n-nodes-base.merge",
       "typeVersion": 3,
       "position": [
-        920,
-        180
+        928,
+        192
       ]
     },
     {
@@ -93,29 +82,30 @@
             {
               "id": "3a01de87-1902-4b30-a080-5454a6bea7d1",
               "name": "hash",
-              "value": "={{ $json.query.hash }}",
+              "value": "={{ $json.hash }}",
               "type": "string"
             }
           ]
         },
         "options": {}
       },
-      "id": "4504f071-5bb4-474b-bd1e-006d684594d1",
+      "id": "81ba86b4-0104-41d7-96c4-01d53a332117",
       "name": "Keep Original Hash",
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.4,
       "position": [
-        -620,
+        -624,
         160
       ]
     },
     {
       "parameters": {
-        "curlImport": "",
+        "preBuiltAgentsCalloutHttpRequest": "",
         "httpVariantWarning": "",
+        "curlImport": "",
         "method": "GET",
-        "url": "=https://www.virustotal.com/api/v3/files/{{ $json.query.hash }}",
         "": "",
+        "url": "=https://www.virustotal.com/api/v3/files/{{ $json.hash }}",
         "authentication": "predefinedCredentialType",
         "nodeCredentialType": "virusTotalApi",
         "provideSslCertificates": false,
@@ -133,13 +123,13 @@
         },
         "infoMessage": ""
       },
-      "id": "4ff6b40b-0bd0-478c-bcf5-20eaa52ff191",
+      "id": "955e1e4d-1d0a-4e8f-bc6f-7c04f9e7f770",
       "name": "VirusTotal Hash Search",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [
-        -620,
-        340
+        -624,
+        352
       ],
       "extendsCredential": "virusTotalApi",
       "alwaysOutputData": true,
@@ -153,16 +143,16 @@
     {
       "parameters": {
         "operation": "search",
-        "value": "={{ $json.query.hash }}",
+        "value": "={{ $json.hash }}",
         "additionalFields": {}
       },
-      "id": "658cc885-343f-498f-b25b-99115dc84083",
+      "id": "863773fb-1eb5-40c1-9683-4a02df1eeb66",
       "name": "MISP Hash Search",
       "type": "n8n-nodes-base.misp",
       "typeVersion": 1,
       "position": [
-        -620,
-        1140
+        -624,
+        1152
       ],
       "alwaysOutputData": true,
       "credentials": {
@@ -210,22 +200,23 @@
         },
         "options": {}
       },
-      "id": "c6219741-b114-4f90-b27e-e111f5881996",
+      "id": "949e0dde-b711-40e9-a3c2-d6943b121993",
       "name": "Field Extraction VirusTotal",
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.4,
       "position": [
-        380,
-        340
+        384,
+        352
       ]
     },
     {
       "parameters": {
-        "curlImport": "",
+        "preBuiltAgentsCalloutHttpRequest": "",
         "httpVariantWarning": "",
+        "curlImport": "",
         "method": "POST",
-        "url": "https://hybrid-analysis.com/api/v2/search/hash",
         "": "",
+        "url": "https://hybrid-analysis.com/api/v2/search/hash",
         "authentication": "predefinedCredentialType",
         "nodeCredentialType": "hybridAnalysisApi",
         "provideSslCertificates": false,
@@ -238,7 +229,7 @@
           "parameters": [
             {
               "name": "hash",
-              "value": "={{ $json.query.hash }}"
+              "value": "={{ $json.hash }}"
             }
           ]
         },
@@ -253,13 +244,13 @@
         },
         "infoMessage": ""
       },
-      "id": "779a7599-df0f-4368-aa39-add8443694fc",
+      "id": "761a9e98-60b4-43a7-a6ef-0b49b6c56a4a",
       "name": "HybridAnalysis Hash Search",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [
-        -620,
-        540
+        -624,
+        544
       ],
       "extendsCredential": "hybridAnalysisApi",
       "alwaysOutputData": true,
@@ -278,7 +269,7 @@
         "headerParameters": {
           "parameters": [
             {
-              "name": "API-KEY",
+              "name": "Auth-Key",
               "value": "<your-api-key>"
             }
           ]
@@ -293,19 +284,19 @@
             },
             {
               "name": "hash",
-              "value": "={{ $json.query.hash }}"
+              "value": "={{ $json.hash }}"
             }
           ]
         },
         "options": {}
       },
-      "id": "faf76f18-4ef2-4090-9678-028539d77e48",
+      "id": "2b8c4c43-ab9f-4056-8509-a192fb3177da",
       "name": "MalwareBaazar Hash Search",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [
-        -620,
-        760
+        -624,
+        768
       ]
     },
     {
@@ -352,13 +343,13 @@
         },
         "options": {}
       },
-      "id": "6e4f0797-3a64-42f0-a5b8-7a942c762136",
+      "id": "0536c6ab-6a35-4e3e-a0be-4d108ad46f15",
       "name": "Field Extraction HybridAnalysis",
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.4,
       "position": [
-        380,
-        540
+        384,
+        544
       ]
     },
     {
@@ -399,13 +390,13 @@
         },
         "options": {}
       },
-      "id": "3974369f-3c53-440f-966d-ddc73856ae27",
+      "id": "11b45a02-4be2-47f3-bf49-48c127070c2f",
       "name": "Field Extraction MalwareBaazar",
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.4,
       "position": [
-        380,
-        760
+        384,
+        768
       ]
     },
     {
@@ -414,13 +405,13 @@
         "jsonOutput": "{\n  \"html\": \"No MISP events have been found\"\n}\n",
         "options": {}
       },
-      "id": "0c235120-91e2-48bf-8c89-80d37d87fe4c",
+      "id": "77222f00-2436-4d39-ac2a-0a7c6300a6b2",
       "name": "Field Extraction MISP false",
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.4,
       "position": [
-        380,
-        1160
+        384,
+        1168
       ]
     },
     {
@@ -443,7 +434,7 @@
         },
         "options": {}
       },
-      "id": "96691125-2d34-40e5-9890-93168b499845",
+      "id": "d594c3ef-6c8a-460b-9c22-9c1a78ef0013",
       "name": "Field Extraction MISP true",
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.4,
@@ -458,13 +449,13 @@
         "destinationFieldName": "hb_data",
         "options": {}
       },
-      "id": "25290a62-ccb1-4994-85ca-2e032ed51414",
+      "id": "9e571f15-89e9-43b9-bdbe-f51ef13b2e01",
       "name": "Aggregate Hybrid Analysis",
       "type": "n8n-nodes-base.aggregate",
       "typeVersion": 1,
       "position": [
-        180,
-        540
+        192,
+        544
       ]
     },
     {
@@ -473,12 +464,12 @@
         "destinationFieldName": "misp_data",
         "options": {}
       },
-      "id": "217e73ce-0f48-413f-a8b9-805c9874c2d0",
+      "id": "739f3db8-6494-4a73-998c-9cc0b300ee5c",
       "name": "Aggregate MISP",
       "type": "n8n-nodes-base.aggregate",
       "typeVersion": 1,
       "position": [
-        180,
+        192,
         960
       ]
     },
@@ -487,14 +478,33 @@
         "mode": "runOnceForEachItem",
         "jsCode": "const htmlArray = [];\nfor (const item of $input.item.json.misp_data) {\n  console.log(item.misp_info)\n  console.log(item.misp_link)\n  const html = `\n        Hash found in <a href=\"${item.misp_link}\" target=\"_blank\">${item.misp_info}</a><br>\n    `;\n    // Add generated HTML to the array\n    htmlArray.push(html);\n}\n\nconst finalHtml = htmlArray.join('\\n');\n\nreturn { html: finalHtml };"
       },
-      "id": "78f8ccc2-2c86-4249-91b9-0abef509fc33",
+      "id": "0273462c-f022-4c56-b536-1c9077c0702d",
       "name": "Prepare MISP HTML",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        380,
+        384,
         960
       ]
+    },
+    {
+      "parameters": {
+        "workflowInputs": {
+          "values": [
+            {
+              "name": "hash"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        -1104,
+        592
+      ],
+      "id": "49e2d0a1-8771-4d57-8f8a-4dac3f6ea6f3",
+      "name": "When Executed by Another Workflow"
     }
   ],
   "pinData": {},
@@ -682,7 +692,7 @@
         ]
       ]
     },
-    "Execute Workflow Trigger": {
+    "When Executed by Another Workflow": {
       "main": [
         [
           {
@@ -718,11 +728,11 @@
   "settings": {
     "executionOrder": "v1"
   },
-  "versionId": "96cc7529-c49b-45b6-a39c-8900778d2b09",
+  "versionId": "c0b1470b-f4df-4525-a973-0f33035f4474",
   "meta": {
     "templateCredsSetupCompleted": true,
     "instanceId": "f9840ed24cb417efbbb054fd3a3d632ab0351dce782a4daf8397f13882237b22"
   },
-  "id": "vHXSPb9lJI5mSiiS",
+  "id": "0DrZHMHMYhADOOfV",
   "tags": []
 }

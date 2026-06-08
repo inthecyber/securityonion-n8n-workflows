@@ -3,7 +3,7 @@
   "nodes": [
     {
       "parameters": {
-        "html": "<!DOCTYPE html>\n<html>\n  <head>\n    <meta charset=\"utf-8\">\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">\n    <title>Report</title>\n    <link rel=\"stylesheet\" href=\"https://cdn.jsdelivr.net/npm/bulma@1.0.1/css/bulma.min.css\">\n    <link rel=\"stylesheet\" href=\"https://cdn.jsdelivr.net/npm/bulma-prefers-dark@0.1.0/css/bulma-prefers-dark.min.css\">\n    <style>\n      @media (prefers-color-scheme: dark) {\n        html, body {\n          background-color: hsl(0, 0%, 21%);\n        }\n      }\n    </style>\n  </head>\n  <body>\n    <section class=\"hero is-fullheight\">\n        <div class=\"hero-body\">\n            <div class=\"container is-fluid content\">\n                <p class=\"title is-2\">\n                  Report - Domain Analysis {{ $json.out[0]['domain'] }}\n                </p> \n                <p class=\"title is-3\">Shodan - <a href=\"https://www.shodan.io/search?query=hostname:{{ $json.out[0]['domain'] }}\" target=\"_blank\">Report</a></p> \n                <p>\n                  {{ $json.out[1].html }}\n                </p>\n                <p class=\"title is-3\">VirusTotal - <a href=\"{{ $json.out[2].virustotal_link }}\" target=\"_blank\">Report</a></p>\n                <p>\n                  <strong>Malicious:</strong> {{  $if($json.out[2].last_analysis_stats,$json.out[2].last_analysis_stats.malicious,\"Information not found\") }}<br>\n                  <strong>Suspicious:</strong> {{  $if($json.out[2].last_analysis_stats,$json.out[2].last_analysis_stats.suspicious,\"Information not found\") }}<br>\n                  <strong>Undetected:</strong> {{  $if($json.out[2].last_analysis_stats,$json.out[2].last_analysis_stats.undetected,\"Information not found\") }}<br>\n                  <strong>Harmless:</strong> {{  $if($json.out[2].last_analysis_stats,$json.out[2].last_analysis_stats.harmless,\"Information not found\") }}<br>\n                  <strong>Last analysis date</strong> {{ $if($json.out[2].virustotal_date.isEmpty(),\"Information  not found\",DateTime.fromSeconds($json.out[2].virustotal_date.toNumber()).toISO()) }}\n                </p>\n                <p class=\"title is-3\">Urlscan - <a href=\"https://urlscan.io/search/#{{ $json.out[0]['domain'] }}\" target=\"_blank\">Report</a></p>\n                <p>\n                    <strong>Last 30 days activity:</strong><br>\n                    {{ $json.out[3].html }}\n                </p>\n                <p class=\"title is-3\">MISP</p>\n                <p>{{ $json.out[4].html }}</p>       \n            </div>\n        </div>\n        <div class=\"hero-foot\">\n            <footer class=\"footer\">\n                <div class=\"content has-text-centered\">\n                  <p>\n                    Built with ❤️ by BlueTeam @ <a href=\"https://www.inthecybergroup.com/en/\" target=\"_blank\">InTheCyber</a>\n                  </p>\n                </div>\n            </footer>\n        </div>\n    </section>\n  </body>\n</html>"
+        "html": "<!DOCTYPE html>\n<html>\n  <head>\n    <meta charset=\"utf-8\">\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">\n    <title>Report</title>\n    <link rel=\"stylesheet\" href=\"https://cdn.jsdelivr.net/npm/bulma@1.0.1/css/bulma.min.css\">\n    <link rel=\"stylesheet\" href=\"https://cdn.jsdelivr.net/npm/bulma-prefers-dark@0.1.0/css/bulma-prefers-dark.min.css\">\n    <style>\n      @media (prefers-color-scheme: dark) {\n        html, body {\n          background-color: hsl(0, 0%, 21%);\n        }\n      }\n    </style>\n  </head>\n  <body>\n    <section class=\"hero is-fullheight\">\n        <div class=\"hero-body\">\n            <div class=\"container is-fluid content\">\n                <p class=\"title is-2\">\n                  Report - Domain Analysis {{ $json.out[0]['domain'] }}\n                </p> \n                <p class=\"title is-3\">Shodan - <a href=\"https://www.shodan.io/search?query=hostname:{{ $json.out[0]['domain'] }}\" target=\"_blank\">Report</a></p> \n                <p>\n                  {{ $json.out[1].html }}\n                </p>\n                <p class=\"title is-3\">VirusTotal - <a href=\"{{ $json.out[2].virustotal_link }}\" target=\"_blank\">Report</a></p>\n                <p>\n                  <strong>Malicious:</strong> {{  $if($json.out[2].last_analysis_stats,$json.out[2].last_analysis_stats.malicious,\"Information not found\") }}<br>\n                  <strong>Suspicious:</strong> {{  $if($json.out[2].last_analysis_stats,$json.out[2].last_analysis_stats.suspicious,\"Information not found\") }}<br>\n                  <strong>Undetected:</strong> {{  $if($json.out[2].last_analysis_stats,$json.out[2].last_analysis_stats.undetected,\"Information not found\") }}<br>\n                  <strong>Harmless:</strong> {{  $if($json.out[2].last_analysis_stats,$json.out[2].last_analysis_stats.harmless,\"Information not found\") }}<br>\n                  <strong>Last analysis date</strong> {{ $if($json.out[2].virustotal_date.isEmpty(),\"Information  not found\",DateTime.fromSeconds($json.out[2].virustotal_date.toNumber()).toISO()) }}\n                </p>\n                <p class=\"title is-3\">Urlscan - <a href=\"https://urlscan.io/search/#{{ $json.out[0]['domain'] }}\" target=\"_blank\">Report</a></p>\n                <p>\n                    {{ $json.out[3].html }}\n                </p>\n                <p class=\"title is-3\">MISP</p>\n                <p>{{ $json.out[4].html }}</p>     \n            </div>\n        </div>\n        <div class=\"hero-foot\">\n            <footer class=\"footer\">\n                <div class=\"content has-text-centered\">\n                  <p>\n                    Built with ❤️ by BlueTeam @ <a href=\"https://www.inthecybergroup.com/en/\" target=\"_blank\">InTheCyber</a>\n                  </p>\n                </div>\n            </footer>\n        </div>\n    </section>\n  </body>\n</html>"
       },
       "id": "0665b26e-b14e-4ccb-8d11-f68388d0678e",
       "name": "HTML",
@@ -25,19 +25,8 @@
       "type": "n8n-nodes-base.aggregate",
       "typeVersion": 1,
       "position": [
-        1720,
+        1728,
         -720
-      ]
-    },
-    {
-      "parameters": {},
-      "id": "87543b70-5160-4d5b-a967-0b0773b0ea7d",
-      "name": "Execute Workflow Trigger",
-      "type": "n8n-nodes-base.executeWorkflowTrigger",
-      "typeVersion": 1,
-      "position": [
-        -1180,
-        -160
       ]
     },
     {
@@ -60,7 +49,7 @@
             {
               "id": "32ae4573-b0a6-4e8b-9995-e111c8441534",
               "name": "domain",
-              "value": "={{ $json.query.domain }}",
+              "value": "={{ $json.domain }}",
               "type": "string"
             }
           ]
@@ -72,13 +61,13 @@
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.4,
       "position": [
-        -460,
+        -464,
         -800
       ]
     },
     {
       "parameters": {
-        "url": "=https://api.shodan.io/shodan/host/search?&query=hostname:{{ $json.query.domain }}",
+        "url": "=https://api.shodan.io/shodan/host/search?&query=hostname:{{ $json.domain }}",
         "sendQuery": true,
         "queryParameters": {
           "parameters": [
@@ -102,18 +91,19 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [
-        -460,
-        -580
+        -464,
+        -576
       ],
       "alwaysOutputData": false
     },
     {
       "parameters": {
-        "curlImport": "",
+        "preBuiltAgentsCalloutHttpRequest": "",
         "httpVariantWarning": "",
+        "curlImport": "",
         "method": "GET",
-        "url": "=https://www.virustotal.com/api/v3/domains/{{ $json.query.domain }}",
         "": "",
+        "url": "=https://www.virustotal.com/api/v3/domains/{{ $json.domain }}",
         "authentication": "predefinedCredentialType",
         "nodeCredentialType": "virusTotalApi",
         "provideSslCertificates": false,
@@ -136,8 +126,8 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [
-        -460,
-        -280
+        -464,
+        -288
       ],
       "extendsCredential": "virusTotalApi",
       "credentials": {
@@ -149,7 +139,16 @@
     },
     {
       "parameters": {
-        "url": "=https://urlscan.io/api/v1/search/?q=page.domain:{{ $json.query.domain }} AND date:>now-30d",
+        "url": "=https://urlscan.io/api/v1/search/?q=page.domain:{{ $json.domain }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "API-Key",
+              "value": "<your-api-key>"
+            }
+          ]
+        },
         "options": {}
       },
       "id": "712d3e6b-3ca4-4458-baf3-bffa526e30c6",
@@ -157,31 +156,9 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [
-        -460,
+        -464,
         0
       ]
-    },
-    {
-      "parameters": {
-        "operation": "search",
-        "value": "={{ $json.query.domain }}",
-        "additionalFields": {}
-      },
-      "id": "4ece484a-e932-411f-832d-a6fa4a33a361",
-      "name": "MISP Domain Search",
-      "type": "n8n-nodes-base.misp",
-      "typeVersion": 1,
-      "position": [
-        -460,
-        440
-      ],
-      "alwaysOutputData": true,
-      "credentials": {
-        "mispApi": {
-          "id": "MUYZzqpUvD41rZ4X",
-          "name": "MISP account Github"
-        }
-      }
     },
     {
       "parameters": {
@@ -212,7 +189,7 @@
       "typeVersion": 2,
       "position": [
         -240,
-        -580
+        -576
       ],
       "alwaysOutputData": false
     },
@@ -222,7 +199,8 @@
           "options": {
             "caseSensitive": true,
             "leftValue": "",
-            "typeValidation": "strict"
+            "typeValidation": "strict",
+            "version": 1
           },
           "conditions": [
             {
@@ -250,39 +228,6 @@
     },
     {
       "parameters": {
-        "conditions": {
-          "options": {
-            "caseSensitive": true,
-            "leftValue": "",
-            "typeValidation": "strict"
-          },
-          "conditions": [
-            {
-              "id": "20a4c3ac-1893-4ffd-9101-5cd8a27fa070",
-              "leftValue": "={{ $json.Event }}",
-              "rightValue": "",
-              "operator": {
-                "type": "object",
-                "operation": "exists",
-                "singleValue": true
-              }
-            }
-          ],
-          "combinator": "and"
-        },
-        "options": {}
-      },
-      "id": "6250d198-b585-4f27-862c-5fd316229507",
-      "name": "If MISP",
-      "type": "n8n-nodes-base.if",
-      "typeVersion": 2,
-      "position": [
-        -240,
-        440
-      ]
-    },
-    {
-      "parameters": {
         "mode": "runOnceForEachItem",
         "jsCode": "const htmlArray = [];\nfor (const item of $input.item.json.matches) {\n  const html = `\n        <strong>Hostnames</strong>: ${item.hostnames}<br>\n        <strong>IP</strong>: ${item.ip_str}<br>\n        <strong>Org</strong>: ${item.org}<br>\n        <strong>Timestamp</strong>: ${item.timestamp}<br>\n        <br>\n    `;\n    // Add generated HTML to the array\n    htmlArray.push(html);\n}\n\nconst finalHtml = htmlArray.join('\\n');\n\nreturn { html: finalHtml };"
       },
@@ -292,7 +237,7 @@
       "typeVersion": 2,
       "position": [
         400,
-        -700
+        -704
       ]
     },
     {
@@ -307,20 +252,6 @@
       "position": [
         400,
         -80
-      ]
-    },
-    {
-      "parameters": {
-        "mode": "runOnceForEachItem",
-        "jsCode": "const htmlArray = [];\nfor (const item of $input.item.json.misp_data) {\n  console.log(item.misp_info)\n  console.log(item.misp_link)\n  const html = `\n        Domain found in <a href=\"${item.misp_link}\" target=\"_blank\">${item.misp_info}</a><br>\n    `;\n    // Add generated HTML to the array\n    htmlArray.push(html);\n}\n\nconst finalHtml = htmlArray.join('\\n');\n\nreturn { html: finalHtml };"
-      },
-      "id": "cdd56182-9045-409a-996e-cbab151a9ed3",
-      "name": "MISP HTML",
-      "type": "n8n-nodes-base.code",
-      "typeVersion": 2,
-      "position": [
-        400,
-        380
       ]
     },
     {
@@ -343,7 +274,7 @@
       "typeVersion": 3.4,
       "position": [
         80,
-        -460
+        -464
       ]
     },
     {
@@ -384,7 +315,7 @@
       "typeVersion": 3.4,
       "position": [
         80,
-        -280
+        -288
       ]
     },
     {
@@ -407,7 +338,96 @@
       "typeVersion": 3.4,
       "position": [
         400,
-        140
+        144
+      ]
+    },
+    {
+      "parameters": {
+        "workflowInputs": {
+          "values": [
+            {
+              "name": "domain"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        -1008,
+        -320
+      ],
+      "id": "157baed8-8f8b-4c5f-913f-23750384ff5d",
+      "name": "When Executed by Another Workflow"
+    },
+    {
+      "parameters": {
+        "operation": "search",
+        "value": "={{ $json.domain }}",
+        "additionalFields": {}
+      },
+      "id": "dce58cac-e7aa-4461-9360-5c11078d44b5",
+      "name": "MISP Domain Search",
+      "type": "n8n-nodes-base.misp",
+      "typeVersion": 1,
+      "position": [
+        -464,
+        432
+      ],
+      "alwaysOutputData": true,
+      "credentials": {
+        "mispApi": {
+          "id": "MUYZzqpUvD41rZ4X",
+          "name": "MISP account Github"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 1
+          },
+          "conditions": [
+            {
+              "id": "20a4c3ac-1893-4ffd-9101-5cd8a27fa070",
+              "leftValue": "={{ $json.Event }}",
+              "rightValue": "",
+              "operator": {
+                "type": "object",
+                "operation": "exists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "f7882142-0f65-4f9a-a790-54232a5ef9c8",
+      "name": "If MISP",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        -240,
+        432
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "const htmlArray = [];\nfor (const item of $input.item.json.misp_data) {\n  console.log(item.misp_info)\n  console.log(item.misp_link)\n  const html = `\n        Domain found in <a href=\"${item.misp_link}\" target=\"_blank\">${item.misp_info}</a><br>\n    `;\n    // Add generated HTML to the array\n    htmlArray.push(html);\n}\n\nconst finalHtml = htmlArray.join('\\n');\n\nreturn { html: finalHtml };"
+      },
+      "id": "545c51d8-b1f2-4e72-8110-770b5d2f6918",
+      "name": "MISP HTML",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        400,
+        368
       ]
     },
     {
@@ -416,13 +436,13 @@
         "jsonOutput": "{\n  \"html\": \"No MISP events have been found<br>\"\n}\n",
         "options": {}
       },
-      "id": "af9c3ec1-2ec8-4a83-a685-47270087a4ae",
+      "id": "f17d04a7-e5ea-489b-aaec-313d70dc2680",
       "name": "MISP If False",
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.4,
       "position": [
         400,
-        600
+        592
       ]
     },
     {
@@ -445,13 +465,13 @@
         },
         "options": {}
       },
-      "id": "60a0fbe2-15e6-456e-900e-60145f153821",
+      "id": "cb2a2efa-3ec8-4962-a21e-c82ff26649c2",
       "name": "Field Extraction MISP",
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.4,
       "position": [
-        60,
-        380
+        64,
+        368
       ]
     },
     {
@@ -460,13 +480,13 @@
         "destinationFieldName": "misp_data",
         "options": {}
       },
-      "id": "cba02512-c1ca-4345-a83d-7124bf2211db",
+      "id": "e682f17e-20f8-47fb-9001-be70620ccb6a",
       "name": "Aggregate MISP",
       "type": "n8n-nodes-base.aggregate",
       "typeVersion": 1,
       "position": [
-        220,
-        380
+        224,
+        368
       ]
     }
   ],
@@ -538,17 +558,6 @@
         ]
       ]
     },
-    "MISP Domain Search": {
-      "main": [
-        [
-          {
-            "node": "If MISP",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
     "If Shodan": {
       "main": [
         [
@@ -585,24 +594,6 @@
         ]
       ]
     },
-    "If MISP": {
-      "main": [
-        [
-          {
-            "node": "Field Extraction MISP",
-            "type": "main",
-            "index": 0
-          }
-        ],
-        [
-          {
-            "node": "MISP If False",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
     "Shodan HTML": {
       "main": [
         [
@@ -621,17 +612,6 @@
             "node": "Merge",
             "type": "main",
             "index": 4
-          }
-        ]
-      ]
-    },
-    "MISP HTML": {
-      "main": [
-        [
-          {
-            "node": "Merge",
-            "type": "main",
-            "index": 6
           }
         ]
       ]
@@ -669,40 +649,7 @@
         ]
       ]
     },
-    "MISP If False": {
-      "main": [
-        [
-          {
-            "node": "Merge",
-            "type": "main",
-            "index": 7
-          }
-        ]
-      ]
-    },
-    "Field Extraction MISP": {
-      "main": [
-        [
-          {
-            "node": "Aggregate MISP",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Aggregate MISP": {
-      "main": [
-        [
-          {
-            "node": "MISP HTML",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Execute Workflow Trigger": {
+    "When Executed by Another Workflow": {
       "main": [
         [
           {
@@ -732,13 +679,91 @@
           }
         ]
       ]
+    },
+    "HTML": {
+      "main": [
+        []
+      ]
+    },
+    "MISP Domain Search": {
+      "main": [
+        [
+          {
+            "node": "If MISP",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If MISP": {
+      "main": [
+        [
+          {
+            "node": "Field Extraction MISP",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "MISP If False",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Field Extraction MISP": {
+      "main": [
+        [
+          {
+            "node": "Aggregate MISP",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Aggregate MISP": {
+      "main": [
+        [
+          {
+            "node": "MISP HTML",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "MISP HTML": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 6
+          }
+        ]
+      ]
+    },
+    "MISP If False": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 7
+          }
+        ]
+      ]
     }
   },
   "active": false,
   "settings": {
     "executionOrder": "v1"
   },
-  "versionId": "fa6bc327-3407-4fa6-833e-581e16d2768a",
+  "versionId": "45cddeaa-9228-4cdc-ac15-ddefaad06082",
   "meta": {
     "templateCredsSetupCompleted": true,
     "instanceId": "f9840ed24cb417efbbb054fd3a3d632ab0351dce782a4daf8397f13882237b22"
